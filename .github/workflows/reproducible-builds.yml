@@ -1,0 +1,112 @@
+# Copyright 2024 Signal Messenger, LLC
+# SPDX-License-Identifier: AGPL-3.0-only
+
+name: Reproducible Builds
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package name'
+        required: true
+        default: 'signal-desktop'
+        type: choice
+        options:
+          - signal-desktop
+          - signal-desktop-beta
+      version_tag:
+        description: 'Version tag (e.g. v1.2.3 or v2.0.0-beta.1)'
+        required: true
+        type: string
+jobs:
+  linux:
+    name: Linux deb
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get system specs
+      run: lsb_release -a
+    - name: Get other system specs
+      run: uname -a
+
+    - name: Get version info
+      id: app_info
+      run: |
+        echo "PACKAGE_NAME=${{ inputs.package }}" >> "$GITHUB_ENV"
+
+        echo "git_ref=${{ inputs.version_tag }}" >> $GITHUB_OUTPUT
+
+        PARSED_VERSION=$(echo "${{ inputs.version_tag }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+.*')
+        echo "PACKAGE_VERSION=$PARSED_VERSION" >> "$GITHUB_ENV"
+
+    - name: Add signal desktop signing key and apt repo
+      run: |
+        wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+        cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+
+        wget -O signal-desktop.sources https://updates.signal.org/static/desktop/apt/signal-desktop.sources
+        cat signal-desktop.sources | sudo tee /etc/apt/sources.list.d/signal-desktop.sources > /dev/null
+        sudo apt-get update
+    - name: Download latest deb
+      id: download
+      run: |
+        DOWNLOAD_URI=$(apt-get download --print-uris "$PACKAGE_NAME=$PACKAGE_VERSION" | cut -d"'" -f2)
+        DEB_FILE=$(basename "$DOWNLOAD_URI")
+        echo "deb_file=$DEB_FILE" >> $GITHUB_OUTPUT
+
+        apt-get download "$PACKAGE_NAME=$PACKAGE_VERSION"
+
+        EXPECTED_SHA256=$(sha256sum "$DEB_FILE" | cut -d' ' -f1)
+        echo "Expected SHA256: $EXPECTED_SHA256"
+        echo "expected_sha256=$EXPECTED_SHA256" >> $GITHUB_OUTPUT
+
+    - name: Clone Desktop git repo
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      with:
+        ref: ${{ steps.app_info.outputs.git_ref }}
+
+    - name: Get node version for docker build arg
+      id: node_version
+      run: |
+        NODE_VERSION=$(cat .nvmrc)
+        echo "version=$NODE_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Set up docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: ./reproducible-builds
+        file: ./reproducible-builds/Dockerfile
+        tags: signal-desktop:latest
+        load: true
+        push: false
+        build-args: |
+          SOURCE_DATE_EPOCH=1
+          NODE_VERSION=${{ steps.node_version.outputs.version }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build Linux deb
+      id: build
+      run: |
+        cd reproducible-builds
+        ./build.sh public
+
+        cd ../release
+        BUILT_FILE=$(ls | grep deb | tail -1)
+        ACTUAL_SHA256=$(sha256sum $BUILT_FILE | cut -d' ' -f1)
+        echo "actual_sha256=$ACTUAL_SHA256" >> $GITHUB_OUTPUT
+      env:
+        SKIP_DOCKER_BUILD: true
+
+    - name: Compare checksums
+      run: |
+        ACTUAL_SHA256="${{ steps.build.outputs.actual_sha256 }}"
+        EXPECTED_SHA256="${{ steps.download.outputs.expected_sha256 }}"
+        if [ "$ACTUAL_SHA256" == "$EXPECTED_SHA256" ]; then
+          echo "✅ Checksum verification successful for ${{ steps.download.outputs.deb_file }}"
+        else
+          echo "❌ Checksum verification failed!"
+          echo "Expected: $EXPECTED_SHA256"
+          echo "Actual:   $ACTUAL_SHA256"
+          exit 1
+        fi

@@ -34,7 +34,7 @@ jobs:
 
         echo "git_ref=${{ inputs.version_tag }}" >> $GITHUB_OUTPUT
 
-        PARSED_VERSION=$(echo "${{ inputs.version_tag }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+.*')
+        PARSED_VERSION=$(echo "${{ inputs.version_tag }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+.*' | tr '-' '~')
         echo "PACKAGE_VERSION=$PARSED_VERSION" >> "$GITHUB_ENV"
 
     - name: Add signal desktop signing key and apt repo

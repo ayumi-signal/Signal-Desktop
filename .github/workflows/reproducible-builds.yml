@@ -58,7 +58,7 @@ jobs:
         apt-get download "$PACKAGE_NAME=$PACKAGE_VERSION"
         DEB_FILE=$(ls | grep deb | tail -1)
         DOWNLOAD_SHA512=$(sha512sum $DEB_FILE | cut -d' ' -f1)
-        if [ "$DOWNLOAD_SHA512" != "$EXPECTED_SHA512" ]; then
+        if [ "$DOWNLOAD_SHA512" == "$EXPECTED_SHA512" ]; then
           echo "Download SHA512 checksum verification successful for $DEB_FILE"
         else
           echo "Download SHA512 checksum verification failed!"

@@ -158,10 +158,12 @@ jobs:
     - name: Run diffoscope to find diffs
       if: failure()
       run: |
+        cd ..
+
         RESULT=$(docker run --rm -w $(pwd) -v $(pwd):$(pwd):ro \
-        registry.salsa.debian.org/reproducible-builds/diffoscope@sha256:51fa7187f093c4cb75b386e7e4caa38ea5783b4a9204b517dc1c91dada209421 --no-progress --max-diff-block-lines 100 \
-        release/${{ steps.build_checksum.outputs.built_file }} \
-        ../${{ steps.download.outputs.deb_file }})
+        registry.salsa.debian.org/reproducible-builds/diffoscope@sha256:51fa7187f093c4cb75b386e7e4caa38ea5783b4a9204b517dc1c91dada209421 --no-progress --max-diff-block-lines 200 \
+        ${{ github.repository }}/release/${{ steps.build_checksum.outputs.built_file }} \
+        ${{ steps.download.outputs.deb_file }})
 
         echo "### Diffoscope result" >> $GITHUB_STEP_SUMMARY
         echo "```" >> $GITHUB_STEP_SUMMARY

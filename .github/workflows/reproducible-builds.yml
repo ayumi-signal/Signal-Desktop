@@ -127,6 +127,7 @@ jobs:
       run: |
         cd release
         BUILT_FILE=$(ls | grep deb | tail -1)
+        echo "built_file=$BUILT_FILE" >> $GITHUB_OUTPUT
         ACTUAL_SHA512=$(sha512sum $BUILT_FILE | cut -d' ' -f1)
         echo "actual_sha512=$ACTUAL_SHA512" >> $GITHUB_OUTPUT
       env:
@@ -153,6 +154,14 @@ jobs:
           echo "❌ Build checksum verification failed!" >> $GITHUB_STEP_SUMMARY
           exit 1
         fi
+
+    - name: Run diffoscope to find diffs
+      if: failure()
+      run: |
+        docker run --rm -w $(pwd) -v $(pwd):$(pwd) \
+        registry.salsa.debian.org/reproducible-builds/diffoscope@sha256:51fa7187f093c4cb75b386e7e4caa38ea5783b4a9204b517dc1c91dada209421 --no-progress \
+        release/${{ steps.build_checksum.outputs.built_file }} \
+        ${{ steps.download.outputs.deb_file }}
 
     - name: Open issue on failure
       if: ${{ failure() && github.repository == 'ayumi-signal/Signal-Desktop' }}

@@ -164,10 +164,15 @@ jobs:
         echo "DEBUG: Download apt anyway"
         apt-get download "$PACKAGE_NAME=$PACKAGE_VERSION"
 
-        docker run --rm -w $(pwd) -v $(pwd):$(pwd):ro \
+        RESULT=$(docker run --rm -w $(pwd) -v $(pwd):$(pwd):ro \
         registry.salsa.debian.org/reproducible-builds/diffoscope@sha256:51fa7187f093c4cb75b386e7e4caa38ea5783b4a9204b517dc1c91dada209421 --no-progress \
         release/${{ steps.build_checksum.outputs.built_file }} \
-        ${{ steps.download.outputs.deb_file }}
+        ${{ steps.download.outputs.deb_file }})
+
+        echo "### Diffoscope result" >> $GITHUB_STEP_SUMMARY
+        echo "```" >> $GITHUB_STEP_SUMMARY
+        echo "$RESULT" >> $GITHUB_STEP_SUMMARY
+        echo "```" >> $GITHUB_STEP_SUMMARY
 
     - name: Open issue on failure
       if: ${{ failure() && github.repository == 'ayumi-signal/Signal-Desktop' }}

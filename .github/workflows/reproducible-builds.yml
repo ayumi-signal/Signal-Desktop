@@ -158,7 +158,13 @@ jobs:
     - name: Run diffoscope to find diffs
       if: failure()
       run: |
-        docker run --rm -w $(pwd) -v $(pwd):$(pwd) \
+        echo "DEBUG: pwd"
+        pwd
+
+        echo "DEBUG: Download apt anyway"
+        apt-get download "$PACKAGE_NAME=$PACKAGE_VERSION"
+
+        docker run --rm -w $(pwd) -v $(pwd):$(pwd):ro \
         registry.salsa.debian.org/reproducible-builds/diffoscope@sha256:51fa7187f093c4cb75b386e7e4caa38ea5783b4a9204b517dc1c91dada209421 --no-progress \
         release/${{ steps.build_checksum.outputs.built_file }} \
         ${{ steps.download.outputs.deb_file }}

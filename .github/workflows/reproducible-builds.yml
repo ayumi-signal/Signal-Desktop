@@ -160,10 +160,10 @@ jobs:
       run: |
         apt-get download "$PACKAGE_NAME=$PACKAGE_VERSION"
 
-        RESULT=$(docker run --rm -w $(pwd) -v $(pwd):$(pwd):ro \
+        docker run --rm -w $(pwd) -v $(pwd):$(pwd):ro \
         registry.salsa.debian.org/reproducible-builds/diffoscope@sha256:51fa7187f093c4cb75b386e7e4caa38ea5783b4a9204b517dc1c91dada209421 --no-progress --max-report-size 10000 --max-diff-block-lines 100 \
         release/${{ steps.build_checksum.outputs.built_file }} \
-        ${{ steps.download.outputs.deb_file }})
+        ${{ steps.download.outputs.deb_file }}
 
         echo "### Diffoscope result" >> $GITHUB_STEP_SUMMARY
         echo "```" >> $GITHUB_STEP_SUMMARY

@@ -37,6 +37,9 @@ jobs:
         PARSED_VERSION=$(echo "${{ inputs.version_tag }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+.*' | tr '-' '~')
         echo "PACKAGE_VERSION=$PARSED_VERSION" >> "$GITHUB_ENV"
 
+        BRANCH_PREFIX=$(echo "${{ inputs.version_tag }}" | grep -oE '[0-9]+\.[0-9]+')
+        echo "git_branch=$BRANCH_PREFIX.x" >> $GITHUB_OUTPUT
+
         echo "# Reproducing ${{ inputs.package }} Linux deb" >> $GITHUB_STEP_SUMMARY
         echo "## Version: ${{ inputs.version_tag }}" >> $GITHUB_STEP_SUMMARY
 
@@ -174,4 +177,4 @@ jobs:
         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/${{ github.repository }}/issues \
-        -d '{"title":"Reproducible build failed: ${{ inputs.version_tag }}","body":"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+        -d '{"title":"Reproducible build failed: ${{ inputs.version_tag }}","body":"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}","labels":["${{ steps.app_info.outputs.git_branch }}"]}'

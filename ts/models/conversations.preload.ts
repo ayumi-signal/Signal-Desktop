@@ -271,6 +271,7 @@ import * as Message from '../types/Message2.preload.ts';
 import { itemStorage } from '../textsecure/Storage.preload.ts';
 import { isUsernameValid } from '../util/Username.dom.ts';
 import type { Emoji } from '../axo/emoji.std.ts';
+import { canConversationOnlyBeMutedAlways } from '../conversations/canConversationOnlyBeMutedAlways.dom.ts';
 
 const { compact, isNumber, throttle, debounce } = lodash;
 
@@ -5309,10 +5310,12 @@ export class ConversationModel {
       { noTrigger: viaStorageServiceSync }
     );
 
-    // If our profile key was cleared above, we don't tell our linked devices about it.
-    //   We want linked devices to tell us what it should be, instead of telling them to
-    //   erase their local value.
-    if (!viaStorageServiceSync) {
+    // We _don't_ update storage service when we find out about a new profileKey unless
+    // we're a primary device
+    if (
+      !viaStorageServiceSync &&
+      window.ConversationController.areWePrimaryDevice()
+    ) {
       this.captureChange('profileKey');
     }
 
@@ -5679,9 +5682,19 @@ export class ConversationModel {
   }
 
   setMuteExpiration(
-    muteExpiresAt = 0,
+    expiresAt = 0,
     { viaStorageServiceSync = false } = {}
   ): void {
+    let muteExpiresAt = expiresAt;
+
+    if (
+      muteExpiresAt > 0 &&
+      canConversationOnlyBeMutedAlways(this.attributes)
+    ) {
+      log.error('Invalid mute expiration for only-always-mute conversation');
+      muteExpiresAt = Number.MAX_SAFE_INTEGER;
+    }
+
     const prevExpiration = this.get('muteExpiresAt');
 
     if (prevExpiration === muteExpiresAt) {

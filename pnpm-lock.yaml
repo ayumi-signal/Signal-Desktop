@@ -17,7 +17,7 @@ patchedDependencies:
     hash: d232c1154bffd88fa8df40fc91dc36098b29aba725d826c24ce74cfac7803919
     path: patches/@napi-rs__canvas@0.1.61.patch
   '@types/chai':
-    hash: 610a7faa9e043c420d54f80984cbbbe4d0c5940d76cf57de8112e93a70862fb1
+    hash: b1cea4e432957039e7f72a32140d7a718258944078c5d5bdb40ad62b8717cb97
     path: patches/@types__chai.patch
   '@types/fabric@4.5.3':
     hash: e5f339ecf72fbab1c91505e7713e127a7184bfe8164aa3a9afe9bf45a0ad6b89
@@ -34,9 +34,6 @@ patchedDependencies:
   dmg-builder:
     hash: 7ce1df215d2c4dcbe797485ec0456168d19a4870687b21c489062abd079c7982
     path: patches/dmg-builder.patch
-  eslint-plugin-better-tailwindcss:
-    hash: a94affa4d170a27c4cfd44f7ac30ea11ae285cb4e270a5d930dd28cc79901b4f
-    path: patches/eslint-plugin-better-tailwindcss.patch
   fabric@4.6.0:
     hash: 259e6eff3d60c4a453f7815fca6aa0d3a81842f4efdc4051836812fc1e711e00
     path: patches/fabric+4.6.0.patch
@@ -73,14 +70,14 @@ importers:
         specifier: 2.0.16
         version: 2.0.16
       '@signalapp/libsignal-client':
-        specifier: 0.93.2
-        version: 0.93.2
+        specifier: 0.94.0
+        version: 0.94.0
       '@signalapp/mute-state-change':
         specifier: workspace:1.0.0
         version: link:packages/mute-state-change
       '@signalapp/ringrtc':
-        specifier: 2.68.1
-        version: 2.68.1
+        specifier: 2.69.0
+        version: 2.69.0
       '@signalapp/sqlcipher':
         specifier: 3.2.1
         version: 3.2.1
@@ -252,7 +249,7 @@ importers:
         version: 5.16.6
       '@types/chai':
         specifier: 5.2.3
-        version: 5.2.3(patch_hash=610a7faa9e043c420d54f80984cbbbe4d0c5940d76cf57de8112e93a70862fb1)
+        version: 5.2.3(patch_hash=b1cea4e432957039e7f72a32140d7a718258944078c5d5bdb40ad62b8717cb97)
       '@types/chai-as-promised':
         specifier: 8.0.2
         version: 8.0.2
@@ -444,7 +441,7 @@ importers:
         version: 10.1.0(jiti@2.6.1)
       eslint-plugin-better-tailwindcss:
         specifier: 4.3.2
-        version: 4.3.2(patch_hash=a94affa4d170a27c4cfd44f7ac30ea11ae285cb4e270a5d930dd28cc79901b4f)(eslint@10.1.0(jiti@2.6.1))(oxlint@1.57.0(oxlint-tsgolint@0.17.4))(tailwindcss@4.2.2)(typescript@6.0.2)
+        version: 4.3.2(eslint@10.1.0(jiti@2.6.1))(oxlint@1.57.0(oxlint-tsgolint@0.17.4))(tailwindcss@4.2.2)(typescript@6.0.2)
       execa:
         specifier: 9.6.1
         version: 9.6.1
@@ -4118,8 +4115,8 @@ packages:
   '@signalapp/libsignal-client@0.92.2':
     resolution: {integrity: sha512-mSYKpw32Rtmm+D1y8NKzNA9wkiuU60gXRGuum6NTGRN9C3NI4R1cb6xE9w7q+6rjR4zAb4qZWb9QUG5QcLr7pg==}
 
-  '@signalapp/libsignal-client@0.93.2':
-    resolution: {integrity: sha512-wDDNQqOcVcoHutdgEWgih80QYU+nP+aIdjMsK0dKrl9H2N2qZPoHgqBQTh78QEoIPteq2idrcZakdqTvil3VFw==}
+  '@signalapp/libsignal-client@0.94.0':
+    resolution: {integrity: sha512-yunLwp/gYwn/6Nd1c7zThsPFvQUoONdkWMd1tJIUI5+RYFUAtuBnU6JI5BmHDAlsaTFXxSEnhAo6/4Qywbcd7Q==}
 
   '@signalapp/minimask@1.0.1':
     resolution: {integrity: sha512-QAwo0joA60urTNbW9RIz6vLKQjy+jdVtH7cvY0wD9PVooD46MAjE40MLssp4xUJrph91n2XvtJ3pbEUDrmT2AA==}
@@ -4134,8 +4131,8 @@ packages:
     resolution: {integrity: sha512-y2sgqdivlrG41J4Zvt/82xtH/PZjDlgItqlD2g/Cv3ZbjlR6cGhTNXbfNygCJB8nXj+C7I28pjt1Zm3k0pv2mg==}
     engines: {npm: '>=8.2.3'}
 
-  '@signalapp/ringrtc@2.68.1':
-    resolution: {integrity: sha512-S7fHuU9klQixZklNaRaWHNnBveckgPZRMSFlX0qfGMwWBLZYcfRpZTzwg481h2+9MBBfvB/p0jBukcjoq+gSaw==}
+  '@signalapp/ringrtc@2.69.0':
+    resolution: {integrity: sha512-yugpBTyFvmeV9//DdCIj1c1pc23GdLsRR0jHsfaDKVyDKvaa1JQ7aa2xjUZjSZNwqQK+X2y6EcUSErr0Hba4Ww==}
     hasBin: true
 
   '@signalapp/sqlcipher@3.2.1':
@@ -14015,7 +14012,7 @@ snapshots:
       node-gyp-build: 4.8.4
       type-fest: 4.26.1
 
-  '@signalapp/libsignal-client@0.93.2':
+  '@signalapp/libsignal-client@0.94.0':
     dependencies:
       node-gyp-build: 4.8.4
       type-fest: 4.26.1
@@ -14053,7 +14050,7 @@ snapshots:
       lodash: 4.17.23
       quill-delta: 5.1.0
 
-  '@signalapp/ringrtc@2.68.1':
+  '@signalapp/ringrtc@2.69.0':
     dependencies:
       https-proxy-agent: 7.0.6
       tar: 7.5.2
@@ -14661,9 +14658,9 @@ snapshots:
 
   '@types/chai-as-promised@8.0.2':
     dependencies:
-      '@types/chai': 5.2.3(patch_hash=610a7faa9e043c420d54f80984cbbbe4d0c5940d76cf57de8112e93a70862fb1)
+      '@types/chai': 5.2.3(patch_hash=b1cea4e432957039e7f72a32140d7a718258944078c5d5bdb40ad62b8717cb97)
 
-  '@types/chai@5.2.3(patch_hash=610a7faa9e043c420d54f80984cbbbe4d0c5940d76cf57de8112e93a70862fb1)':
+  '@types/chai@5.2.3(patch_hash=b1cea4e432957039e7f72a32140d7a718258944078c5d5bdb40ad62b8717cb97)':
     dependencies:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
@@ -16568,7 +16565,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-better-tailwindcss@4.3.2(patch_hash=a94affa4d170a27c4cfd44f7ac30ea11ae285cb4e270a5d930dd28cc79901b4f)(eslint@10.1.0(jiti@2.6.1))(oxlint@1.57.0(oxlint-tsgolint@0.17.4))(tailwindcss@4.2.2)(typescript@6.0.2):
+  eslint-plugin-better-tailwindcss@4.3.2(eslint@10.1.0(jiti@2.6.1))(oxlint@1.57.0(oxlint-tsgolint@0.17.4))(tailwindcss@4.2.2)(typescript@6.0.2):
     dependencies:
       '@eslint/css-tree': 3.6.9
       '@valibot/to-json-schema': 1.5.0(valibot@1.2.0(typescript@6.0.2))
